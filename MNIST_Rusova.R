@@ -6,55 +6,55 @@ devtools::install_github("rstudio/keras")
 library('keras')
 library('tensorflow')
 install_keras()
-#установка и запуск библиотек
+#СѓСЃС‚Р°РЅРѕРІРєР° Рё Р·Р°РїСѓСЃРє Р±РёР±Р»РёРѕС‚РµРє
 
 
 install_tensorflow(version = '1.12')
-#откат версии из-за ошибки
+#РѕС‚РєР°С‚ РІРµСЂСЃРёРё РёР·-Р·Р° РѕС€РёР±РєРё
 
 
 mnist <- dataset_mnist()
-#загрузкаа базы
+#Р·Р°РіСЂСѓР·РєР°Р° Р±Р°Р·С‹
 
 
 train_images <- mnist$train$x
 train_labels <- mnist$train$y
 test_images <- mnist$test$x
 test_labels <- mnist$test$y
-#разделение базы на 4 части
+#СЂР°Р·РґРµР»РµРЅРёРµ Р±Р°Р·С‹ РЅР° 4 С‡Р°СЃС‚Рё
 
 
 network <- keras_model_sequential() %>%
 layer_dense(units = 512, activation = 'relu', input_shape = c(28*28)) %>%
 layer_dense(units = 10, activation = 'softmax')
-#построение архитектуру нейроннной сети
+#РїРѕСЃС‚СЂРѕРµРЅРёРµ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ РЅРµР№СЂРѕРЅРЅРЅРѕР№ СЃРµС‚Рё
 
 
 network %>% compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy',metrics = c('accuracy'))
-#+оптимизатор, функция потерь и точность в качестве метрики
+#+РѕРїС‚РёРјРёР·Р°С‚РѕСЂ, С„СѓРЅРєС†РёСЏ РїРѕС‚РµСЂСЊ Рё С‚РѕС‡РЅРѕСЃС‚СЊ РІ РєР°С‡РµСЃС‚РІРµ РјРµС‚СЂРёРєРё
 
 
 train_images <- array_reshape(train_images, c(60000, 28*28))
 train_images <- train_images/255
 str(train_images)
-#изменение размерности и области значений
+#РёР·РјРµРЅРµРЅРёРµ СЂР°Р·РјРµСЂРЅРѕСЃС‚Рё Рё РѕР±Р»Р°СЃС‚Рё Р·РЅР°С‡РµРЅРёР№
 
 test_images <- array_reshape(test_images, c(10000, 28*28))
 test_images <- test_images/255
-#аналогично в тестовой части
+#Р°РЅР°Р»РѕРіРёС‡РЅРѕ РІ С‚РµСЃС‚РѕРІРѕР№ С‡Р°СЃС‚Рё
 
 train_labels <- to_categorical(train_labels)
 test_labels <- to_categorical(test_labels)
-#создание категории для ярлыков
+#СЃРѕР·РґР°РЅРёРµ РєР°С‚РµРіРѕСЂРёРё РґР»СЏ СЏСЂР»С‹РєРѕРІ
 
 
 network %>% fit(train_images, train_labels, epochs = 20, batch_size = 128)
-#тренировка нейронной сети (в результате точность выше 95%)
+#С‚СЂРµРЅРёСЂРѕРІРєР° РЅРµР№СЂРѕРЅРЅРѕР№ СЃРµС‚Рё (РІ СЂРµР·СѓР»СЊС‚Р°С‚Рµ С‚РѕС‡РЅРѕСЃС‚СЊ РІС‹С€Рµ 95%)
 
 
 metric <- network %>% evaluate(test_images, test_labels)
 metric
-#по тестовой выборке точность так же превышает 95%
+#РїРѕ С‚РµСЃС‚РѕРІРѕР№ РІС‹Р±РѕСЂРєРµ С‚РѕС‡РЅРѕСЃС‚СЊ С‚Р°Рє Р¶Рµ РїСЂРµРІС‹С€Р°РµС‚ 95%
 
 
 opening <- network %>% predict_classes(test_images[1:10,])
@@ -65,18 +65,18 @@ closing <- network %>% predict_classes(test_images[9991:10000,])
 test_labels1 <- mnist$test$y
 test_labels1[9991:10000]
 our10 <- rbind(test_labels1[1:10], test_labels1[9991:10000] )
-#предсказание значений и их сравнение с реальным (в данном случае реальные и предсказанные значения совпали)
+#РїСЂРµРґСЃРєР°Р·Р°РЅРёРµ Р·РЅР°С‡РµРЅРёР№ Рё РёС… СЃСЂР°РІРЅРµРЅРёРµ СЃ СЂРµР°Р»СЊРЅС‹Рј (РІ РґР°РЅРЅРѕРј СЃР»СѓС‡Р°Рµ СЂРµР°Р»СЊРЅС‹Рµ Рё РїСЂРµРґСЃРєР°Р·Р°РЅРЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ СЃРѕРІРїР°Р»Рё)
 
 
 history <- network %>% fit(train_images, train_labels,epochs = 5, batch_size = 128,validation_split = 0.2)
 plot(history)
-#обучение с валидацией +интерактивный и точечный графики
+#РѕР±СѓС‡РµРЅРёРµ СЃ РІР°Р»РёРґР°С†РёРµР№ +РёРЅС‚РµСЂР°РєС‚РёРІРЅС‹Р№ Рё С‚РѕС‡РµС‡РЅС‹Р№ РіСЂР°С„РёРєРё
 
 
 a <- mnist$test$x[7, 1:28, 1:28]
 a
 image(as.matrix(a))
-#изображение 7 числа из тестового массива
+#РёР·РѕР±СЂР°Р¶РµРЅРёРµ 7 С‡РёСЃР»Р° РёР· С‚РµСЃС‚РѕРІРѕРіРѕ РјР°СЃСЃРёРІР°
 
 
 test_a <- array_reshape(a, c(1, 28*28))
@@ -84,11 +84,11 @@ test_a
 dim(test_a)
 test_a <- test_a/255
 network %>% predict_classes(test_a)
-#предсказание числа
+#РїСЂРµРґСЃРєР°Р·Р°РЅРёРµ С‡РёСЃР»Р°
 
 
 par(mfrow = c(2, 2))
-#деление окна
+#РґРµР»РµРЅРёРµ РѕРєРЅР°
 
 a1 <- mnist$test$x[9991, 1:28, 1:28]
 image(as.matrix(a1))
@@ -119,5 +119,4 @@ image(as.matrix(a9))
 
 a10 <- mnist$test$x[10000, 1:28, 1:28]
 image(as.matrix(a10))  
-#10 изображений последних матриц
-
+#10 РёР·РѕР±СЂР°Р¶РµРЅРёР№ РїРѕСЃР»РµРґРЅРёС… РјР°С‚СЂРёС†
