@@ -68,22 +68,17 @@ model_RNN1
 
 model_RNN1 %>%
   compile(loss = 'mse', optimizer = 'adam')
-
-
 model_RNN1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
 rnn_adam_mse<- 0.11
 pred_out <- model_RNN1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
-
-
 model_RNN1 %>%
   compile(loss = 'mape', optimizer = 'adam')
-
-
 model_RNN1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
 rnn_adam_mape<- 0.23
 pred_out <- model_RNN1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
 
 #модель RNN с оптимайзером rmsprop
 model_RNN2 <- keras_model_sequential() %>%
@@ -95,8 +90,6 @@ model_RNN2
 
 model_RNN2 %>%
   compile(loss = 'mse', optimizer = 'rmsprop')
-
-
 model_RNN2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
 rnn_rmsprop_mse<- 0.098
 pred_out <- model_RNN2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
@@ -105,8 +98,6 @@ pred_out <- model_RNN2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 model_RNN2 %>%
   compile(loss = 'mape', optimizer = 'rmsprop')
-
-
 model_RNN2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
 rnn_rmsprop_mape<- 0.024
 pred_out <- model_RNN2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
@@ -136,8 +127,6 @@ model_LSTM1
 
 model_LSTM1 %>%
   compile(loss = 'mse', optimizer = 'adam')
-
-
 model_LSTM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
 lstm_adam_mse<- 0.18
 pred_out <- model_LSTM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
@@ -146,11 +135,11 @@ pred_out <- model_LSTM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 model_LSTM1 %>%
   compile(loss = 'mape', optimizer = 'adam')
-
-
 model_LSTM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
 lstm_adam_mape<- 0.29
 pred_out <- model_LSTM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
 
 #модель LSTM с оптимайзером rmsprop
 model_LSTM2 <- keras_model_sequential() %>%
@@ -170,8 +159,6 @@ model_LSTM2
 
 model_LSTM2 %>%
   compile(loss = 'mse', optimizer = 'rmsprop')
-
-
 model_LSTM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
 lstm_rmsprop_mse<- 0.17
 pred_out <- model_LSTM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
@@ -180,8 +167,6 @@ pred_out <- model_LSTM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 model_LSTM2 %>%
   compile(loss = 'mape', optimizer = 'rmsprop')
-
-
 model_LSTM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
 lstm_rmsprop_mape<- 0.29
 pred_out <- model_LSTM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
@@ -204,8 +189,6 @@ model_SM1
 
 model_SM1 %>%
   compile(loss = 'mse', optimizer = 'adam')
-
-
 model_SM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
 sm_adam_mse<- 0.20
 pred_out <- model_SM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
@@ -214,11 +197,12 @@ pred_out <- model_SM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 model_SM1 %>%
   compile(loss = 'mape', optimizer = 'adam')
-
-
 model_SM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
 sm_adam_mape<- 0.235
 pred_out <- model_SM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
 
 #модель SM с оптимайзером rmsprop
 model_SM2 <- keras_model_sequential() %>%
@@ -230,8 +214,6 @@ model_SM2
 
 model_SM2 %>%
   compile(loss = 'mse', optimizer = 'rmsprop')
-
-
 model_SM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
 sm_rmsprop_mse<- 0.243
 pred_out <- model_SM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
@@ -241,8 +223,6 @@ pred_out <- model_SM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 model_SM2 %>%
   compile(loss = 'mape', optimizer = 'rmsprop')
-
-
 model_SM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
 sm_rmsprop_mape<- 0.236
 pred_out <- model_SM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
