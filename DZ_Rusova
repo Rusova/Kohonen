@@ -1,0 +1,263 @@
+#######################################################################
+#установка и запуск всех необходимых библиотек
+#######################################################################
+install.packages('devtools')
+library('devtools')
+devtools::install_github("rstudio/tensorflow")
+devtools::install_github("rstudio/keras")
+library('keras')
+library('tensorflow')
+install.packages('BatchGetSymbols')
+install.packages('plotly')
+library(plotly)
+library(BatchGetSymbols)
+install_tensorflow()
+use_condaenv("r-tensorflow")
+install_tensorflow(version = '1.12')
+
+
+
+
+
+#######################################################################
+#база данных и подготовка выборок (индекс HSI)
+#######################################################################
+tickers <- c('%5EHSI')
+first.date <- Sys.Date() - 360*5 +23
+last.date <- Sys.Date()
+data <- BatchGetSymbols(tickers = tickers,
+                        first.date = first.date,
+                        last.date = last.date,
+                        cache.folder = file.path(tempdir(),
+                                                 'BGS_Cache') )
+data$df.control
+
+str(data$df.tickers)
+str(data$df.tickers$price.close)
+y <-  data$df.tickers$price.close
+mdata <-  data.frame(index = data$df.tickers$ref.date, price = y, vol = data$df.tickers$volume)
+
+
+datalags = 10
+train <-  mdata[seq(1000 + datalags), ]
+test <-  mdata[1000 + datalags + seq(200 + datalags), ]
+batch.size <-  125
+
+#создание тестовых и тренировочных выборок с входными и выходными нейронами (1000 наблюдений и 200 соотственно)
+x.train <-  array(data = lag(cbind(train$price, train$vol), datalags)[-(1:datalags), ], dim = c(nrow(train) - datalags, datalags, 2))
+y.train <- array(data = train$price[-(1:datalags)], dim = c(nrow(train)-datalags, 1))
+
+x.test <-  array(data = lag(cbind(test$vol, test$price), datalags)[-(1:datalags), ], dim = c(nrow(test) - datalags, datalags, 2))
+y.test <-  array(data = test$price[-(1:datalags)], dim = c(nrow(test) - datalags, 1))
+
+
+
+
+#######################################################################
+#RNN
+#######################################################################
+
+
+#модель RNN с оптимайзером adam
+model_RNN1 <- keras_model_sequential() %>%
+  layer_embedding(input_dim = 100, output_dim = 50) %>%
+  layer_simple_rnn(units = 50) %>%
+  layer_dense(units = 1, activation = "relu")
+
+model_RNN1
+
+model_RNN1 %>%
+  compile(loss = 'mse', optimizer = 'adam')
+
+
+model_RNN1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
+rnn_adam_mse<- 0.11
+pred_out <- model_RNN1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+
+model_RNN1 %>%
+  compile(loss = 'mape', optimizer = 'adam')
+
+
+model_RNN1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
+rnn_adam_mape<- 0.23
+pred_out <- model_RNN1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+#модель RNN с оптимайзером rmsprop
+model_RNN2 <- keras_model_sequential() %>%
+  layer_embedding(input_dim = 100, output_dim = 50) %>%
+  layer_simple_rnn(units = 50) %>%
+  layer_dense(units = 1, activation = "relu")
+
+model_RNN2
+
+model_RNN2 %>%
+  compile(loss = 'mse', optimizer = 'rmsprop')
+
+
+model_RNN2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
+rnn_rmsprop_mse<- 0.098
+pred_out <- model_RNN2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+model_RNN2 %>%
+  compile(loss = 'mape', optimizer = 'rmsprop')
+
+
+model_RNN2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
+rnn_rmsprop_mape<- 0.024
+pred_out <- model_RNN2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+#######################################################################
+#LSTM
+#######################################################################
+
+
+#модель LSTM с оптимайзером adam
+model_LSTM1 <- keras_model_sequential() %>%
+  layer_lstm(units = 100,
+             input_shape = c(datalags, 2),
+             batch_size = batch.size,
+             return_sequences = TRUE,
+             stateful = TRUE) %>%
+  layer_dropout(rate = 0.5) %>%
+  layer_lstm(units = 50,
+             return_sequences = FALSE,
+             stateful = TRUE) %>%
+  layer_dropout(rate = 0.5) %>%
+  layer_dense(units = 1)
+
+model_LSTM1
+
+model_LSTM1 %>%
+  compile(loss = 'mse', optimizer = 'adam')
+
+
+model_LSTM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
+lstm_adam_mse<- 0.18
+pred_out <- model_LSTM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+model_LSTM1 %>%
+  compile(loss = 'mape', optimizer = 'adam')
+
+
+model_LSTM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
+lstm_adam_mape<- 0.29
+pred_out <- model_LSTM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+#модель LSTM с оптимайзером rmsprop
+model_LSTM2 <- keras_model_sequential() %>%
+  layer_lstm(units = 100,
+             input_shape = c(datalags, 2),
+             batch_size = batch.size,
+             return_sequences = TRUE,
+             stateful = TRUE) %>%
+  layer_dropout(rate = 0.5) %>%
+  layer_lstm(units = 50,
+             return_sequences = FALSE,
+             stateful = TRUE) %>%
+  layer_dropout(rate = 0.5) %>%
+  layer_dense(units = 1)
+
+model_LSTM2
+
+model_LSTM2 %>%
+  compile(loss = 'mse', optimizer = 'rmsprop')
+
+
+model_LSTM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
+lstm_rmsprop_mse<- 0.17
+pred_out <- model_LSTM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+model_LSTM2 %>%
+  compile(loss = 'mape', optimizer = 'rmsprop')
+
+
+model_LSTM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
+lstm_rmsprop_mape<- 0.29
+pred_out <- model_LSTM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+
+#######################################################################
+#SM
+#######################################################################
+
+
+#модель SM с оптимайзером adam
+model_SM1 <- keras_model_sequential() %>%
+  layer_dense(units = 100, activation = 'relu') %>%
+  layer_dense(units = 50, activation = 'relu')
+
+
+model_SM1
+
+model_SM1 %>%
+  compile(loss = 'mse', optimizer = 'adam')
+
+
+model_SM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
+sm_adam_mse<- 0.20
+pred_out <- model_SM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+model_SM1 %>%
+  compile(loss = 'mape', optimizer = 'adam')
+
+
+model_SM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
+sm_adam_mape<- 0.235
+pred_out <- model_SM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+#модель SM с оптимайзером rmsprop
+model_SM2 <- keras_model_sequential() %>%
+  layer_dense(units = 100, activation = 'relu') %>%
+  layer_dense(units = 50, activation = 'relu')
+
+
+model_SM2
+
+model_SM2 %>%
+  compile(loss = 'mse', optimizer = 'rmsprop')
+
+
+model_SM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
+sm_rmsprop_mse<- 0.243
+pred_out <- model_SM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+
+model_SM2 %>%
+  compile(loss = 'mape', optimizer = 'rmsprop')
+
+
+model_SM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
+sm_rmsprop_mape<- 0.236
+pred_out <- model_SM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
+
+
+
+
+#######################################################################
+#итоги
+#######################################################################
+result_mse<- c(rnn_adam_mse, rnn_rmsprop_mse, lstm_adam_mse, lstm_rmsprop_mse, sm_adam_mse, sm_rmsprop_mse)
+result_mape<- c(rnn_adam_mape, rnn_rmsprop_mape, lstm_adam_mape, lstm_rmsprop_mape, sm_adam_mape, sm_rmsprop_mape)
+
+result<- data.frame('NN' = c(rep('RNN', 2), rep('LSTM', 2), rep('SM', 2)), 
+                'optimizer' = rep(c('adam', 'rmsprop'), 3),
+                'MSE' = result_mse,
+                'MAPE' = result_mape)
+result
