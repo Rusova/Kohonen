@@ -69,14 +69,14 @@ model_RNN1
 model_RNN1 %>%
   compile(loss = 'mse', optimizer = 'adam')
 model_RNN1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
-rnn_adam_mse<- 0.11
+rnn_adam_mse<- 0.092
 pred_out <- model_RNN1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
 model_RNN1 %>%
   compile(loss = 'mape', optimizer = 'adam')
 model_RNN1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
-rnn_adam_mape<- 0.23
+rnn_adam_mape<- 97.7
 pred_out <- model_RNN1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
@@ -99,7 +99,7 @@ pred_out <- model_RNN2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 model_RNN2 %>%
   compile(loss = 'mape', optimizer = 'rmsprop')
 model_RNN2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
-rnn_rmsprop_mape<- 0.024
+rnn_rmsprop_mape<- 98.4
 pred_out <- model_RNN2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
