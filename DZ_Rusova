@@ -128,7 +128,7 @@ model_LSTM1
 model_LSTM1 %>%
   compile(loss = 'mse', optimizer = 'adam')
 model_LSTM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
-lstm_adam_mse<- 0.18
+lstm_adam_mse<- 0.08
 pred_out <- model_LSTM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
@@ -136,7 +136,7 @@ pred_out <- model_LSTM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 model_LSTM1 %>%
   compile(loss = 'mape', optimizer = 'adam')
 model_LSTM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
-lstm_adam_mape<- 0.29
+lstm_adam_mape<- 94.56
 pred_out <- model_LSTM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
@@ -160,7 +160,7 @@ model_LSTM2
 model_LSTM2 %>%
   compile(loss = 'mse', optimizer = 'rmsprop')
 model_LSTM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
-lstm_rmsprop_mse<- 0.17
+lstm_rmsprop_mse<- 0.09
 pred_out <- model_LSTM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
@@ -168,7 +168,7 @@ pred_out <- model_LSTM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 model_LSTM2 %>%
   compile(loss = 'mape', optimizer = 'rmsprop')
 model_LSTM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size)
-lstm_rmsprop_mape<- 0.29
+lstm_rmsprop_mape<- 93.21
 pred_out <- model_LSTM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
@@ -190,7 +190,7 @@ model_SM1
 model_SM1 %>%
   compile(loss = 'mse', optimizer = 'adam')
 model_SM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
-sm_adam_mse<- 0.20
+sm_adam_mse<- 0.014
 pred_out <- model_SM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
@@ -198,7 +198,7 @@ pred_out <- model_SM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 model_SM1 %>%
   compile(loss = 'mape', optimizer = 'adam')
 model_SM1 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
-sm_adam_mape<- 0.235
+sm_adam_mape<- 95.4
 pred_out <- model_SM1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
@@ -215,7 +215,7 @@ model_SM2
 model_SM2 %>%
   compile(loss = 'mse', optimizer = 'rmsprop')
 model_SM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
-sm_rmsprop_mse<- 0.243
+sm_rmsprop_mse<- 0.012
 pred_out <- model_SM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
@@ -224,7 +224,7 @@ pred_out <- model_SM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 model_SM2 %>%
   compile(loss = 'mape', optimizer = 'rmsprop')
 model_SM2 %>% fit(x.train, y.train, epochs = 10, batch_size = batch.size, validation_split = 0.2)
-sm_rmsprop_mape<- 0.236
+sm_rmsprop_mape<- 94.6
 pred_out <- model_SM2 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 
