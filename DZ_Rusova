@@ -60,7 +60,7 @@ y.test <-  array(data = test$price[-(1:datalags)], dim = c(nrow(test) - datalags
 
 #модель RNN с оптимайзером adam
 model_RNN1 <- keras_model_sequential() %>%
-  layer_embedding(input_dim = 100, output_dim = 50) %>%
+  layer_embedding(input_dim = 1000, output_dim = 50) %>%
   layer_simple_rnn(units = 50) %>%
   layer_dense(units = 1, activation = "relu")
 
@@ -82,7 +82,7 @@ pred_out <- model_RNN1 %>% predict(x.test, batch_size = batch.size) %>% .[,1]
 
 #модель RNN с оптимайзером rmsprop
 model_RNN2 <- keras_model_sequential() %>%
-  layer_embedding(input_dim = 100, output_dim = 50) %>%
+  layer_embedding(input_dim = 1000, output_dim = 50) %>%
   layer_simple_rnn(units = 50) %>%
   layer_dense(units = 1, activation = "relu")
 
