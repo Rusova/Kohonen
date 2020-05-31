@@ -37,6 +37,8 @@ str(data$df.tickers$price.close)
 y <-  data$df.tickers$price.close
 mdata <-  data.frame(index = data$df.tickers$ref.date, price = y, vol = data$df.tickers$volume)
 
+#Стандартизация
+mdata <- data.frame(index = rminimax(mdata$index), price = rminimax(mdata$price), vol= rminimax(mdata$vol))
 
 datalags = 10
 train <-  mdata[seq(1000 + datalags), ]
